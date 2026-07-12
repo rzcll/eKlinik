@@ -112,9 +112,6 @@
 </head>
 <body class="text-sm bg-slate-50 flex flex-col h-screen h-[100dvh] overflow-hidden w-full">
 
-    <!-- DATALIST UNTUK AUTOCOMPLETE DIAGNOSA -->
-    <datalist id="listDiagnosa"></datalist>
-
     <!-- TOAST NOTIFICATION -->
     <div id="toast-container" class="fixed top-6 right-6 z-[500] flex flex-col gap-3 pointer-events-none w-[90%] md:w-auto max-w-sm"></div>
 
@@ -382,13 +379,21 @@
                                 </div>
                                 <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex-1 flex flex-col">
                                     <label class="form-label text-sm md:text-base mb-2"><i class="fas fa-diagnoses text-indigo-500 mr-2"></i>Diagnosa Medis / ICD-10 <span class="text-rose-500">*</span></label>
-                                    <div class="space-y-2 flex-1">
-                                        <!-- LIST DIAGNOSA AUTOCOMPLETE -->
-                                        <input type="text" id="pel_diagnosa1" list="listDiagnosa" required class="form-input text-sm font-bold text-indigo-700" placeholder="1. Diagnosa Utama..." autocomplete="off">
-                                        <input type="text" id="pel_diagnosa2" list="listDiagnosa" class="form-input text-sm text-slate-700" placeholder="2. Diagnosa Sekunder (Opsional)..." autocomplete="off">
-                                        <input type="text" id="pel_diagnosa3" list="listDiagnosa" class="form-input text-sm text-slate-700" placeholder="3. Diagnosa Tambahan (Opsional)..." autocomplete="off">
+                                    <div class="space-y-3 flex-1 relative">
+                                        <div class="relative">
+                                            <input type="text" id="pel_diagnosa1" required class="form-input text-sm font-bold text-indigo-700 relative z-10" placeholder="1. Diagnosa Utama..." autocomplete="off">
+                                            <ul id="dd_pel_diagnosa1" class="absolute z-50 w-full bg-white border border-indigo-100 shadow-2xl rounded-xl mt-1 max-h-40 overflow-y-auto hidden divide-y divide-slate-50"></ul>
+                                        </div>
+                                        <div class="relative">
+                                            <input type="text" id="pel_diagnosa2" class="form-input text-sm text-slate-700 relative z-10" placeholder="2. Diagnosa Sekunder (Opsional)..." autocomplete="off">
+                                            <ul id="dd_pel_diagnosa2" class="absolute z-50 w-full bg-white border border-indigo-100 shadow-2xl rounded-xl mt-1 max-h-40 overflow-y-auto hidden divide-y divide-slate-50"></ul>
+                                        </div>
+                                        <div class="relative">
+                                            <input type="text" id="pel_diagnosa3" class="form-input text-sm text-slate-700 relative z-10" placeholder="3. Diagnosa Tambahan (Opsional)..." autocomplete="off">
+                                            <ul id="dd_pel_diagnosa3" class="absolute z-50 w-full bg-white border border-indigo-100 shadow-2xl rounded-xl mt-1 max-h-40 overflow-y-auto hidden divide-y divide-slate-50"></ul>
+                                        </div>
                                     </div>
-                                    <p class="text-[10px] text-slate-400 mt-2"><i class="fas fa-info-circle"></i> Diagnosa otomatis tersimpan sbg dropdown berikutnya.</p>
+                                    <p class="text-[10px] text-slate-400 mt-2"><i class="fas fa-info-circle"></i> Diagnosa otomatis tersimpan dan muncul sbg dropdown menarik.</p>
                                 </div>
                             </div>
                             <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col h-full min-h-[200px]">
@@ -842,10 +847,11 @@
             <div class="shrink-0 bg-indigo-50 border-b border-indigo-100 px-4 md:px-6 py-3 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3">
                 <h1 class="text-lg md:text-xl font-bold text-indigo-800 flex items-center gap-3 shrink-0"><div class="w-8 h-8 bg-white text-indigo-600 rounded-lg shadow-sm flex items-center justify-center"><i class="fas fa-notes-medical"></i></div>Kunjungan Diagnosa</h1>
                 <div class="flex flex-wrap sm:flex-nowrap gap-2 items-center w-full lg:w-auto">
-                    <!-- KOLOM SEARCH DIAGNOSA MENGGUNAKAN DATALIST -->
+                    <!-- KOLOM SEARCH DIAGNOSA MENGGUNAKAN AUTOCOMPLETE KUSTOM -->
                     <div class="relative w-full sm:w-48 lg:w-64">
-                        <i class="fas fa-search absolute left-3 top-2 text-indigo-400 text-sm z-10"></i>
-                        <input type="text" id="kunjungan_diag_search" list="listDiagnosa" oninput="renderLaporanKunjunganDiagnosa()" placeholder="Ketik Diagnosa..." class="form-input pl-9 text-xs py-1.5 shadow-sm border-indigo-200 focus:border-indigo-500 bg-white" autocomplete="off">
+                        <i class="fas fa-search absolute left-3 top-2.5 text-indigo-400 text-sm z-[15]"></i>
+                        <input type="text" id="kunjungan_diag_search" oninput="renderLaporanKunjunganDiagnosa()" placeholder="Ketik Diagnosa..." class="form-input pl-9 text-xs py-1.5 shadow-sm border-indigo-200 focus:border-indigo-500 bg-white relative z-10" autocomplete="off">
+                        <ul id="dd_kunjungan_diag_search" class="absolute z-50 w-full bg-white border border-indigo-100 shadow-2xl rounded-xl mt-1 max-h-48 overflow-y-auto hidden divide-y divide-slate-50"></ul>
                     </div>
                     <div class="flex flex-col sm:flex-row items-start sm:items-center gap-1 bg-white border border-indigo-200 p-1 rounded-lg shadow-sm w-full sm:w-auto">
                         <div class="flex items-center w-full sm:w-auto">
@@ -863,7 +869,7 @@
             <div class="flex-1 overflow-auto bg-white relative">
                 <table class="w-full text-left whitespace-nowrap min-w-[900px]">
                     <thead class="text-xs font-bold uppercase tracking-wider text-slate-500 bg-slate-100 sticky top-0 z-10 shadow-sm border-b border-slate-200">
-                        <tr><th class="p-3 text-center w-10">#</th><th class="p-3">Waktu</th><th class="p-3">eRM</th><th class="p-3">Nama Pasien</th><th class="p-3 text-center">L/P</th><th class="p-3 text-center">Usia</th><th class="p-3">Alamat Lengkap</th><th class="p-3">Diagnosa Tercatat</th></tr>
+                        <tr><th class="p-3 text-center w-10">#</th><th class="p-3">Waktu</th><th class="p-3">eRM</th><th class="p-3">Nama Pasien</th><th class="p-3 text-center">L/P</th><th class="p-3 text-center">Usia</th><th class="p-3">Alamat Lengkap</th></tr>
                     </thead>
                     <tbody id="tableBodyLaporanKunjunganDiagnosa" class="text-xs md:text-sm text-slate-600 divide-y divide-slate-100"></tbody>
                 </table>
@@ -1528,27 +1534,55 @@
             }, 1000);
         }
 
-        // --- Logika Autocomplete / Dropdown Diagnosa yang Kuat ---
-        function renderDatalist() {
-            const dl = document.getElementById('listDiagnosa');
-            if(!dl) return;
-            dl.innerHTML = '';
-            
-            // Susun secara alfabetis agar lebih mudah dicari
-            Array.from(setDiagnosaMaster).sort().forEach(d => {
-                const opt = document.createElement('option');
-                opt.value = d;
-                dl.appendChild(opt);
+        // --- Logika Autocomplete / Dropdown Diagnosa Kustom (Tampilan Menarik) ---
+        function setupAutocomplete(inputId, dropdownId, onSelectCallback = null) {
+            const input = document.getElementById(inputId);
+            const dropdown = document.getElementById(dropdownId);
+            if(!input || !dropdown) return;
+
+            const render = () => {
+                const val = input.value.trim().toLowerCase();
+                // Tampilkan semua jika kosong, jika tidak filter berdasarkan teks
+                const options = Array.from(setDiagnosaMaster)
+                    .filter(d => d.toLowerCase().includes(val))
+                    .sort();
+
+                dropdown.innerHTML = '';
+                if(options.length === 0) {
+                    dropdown.classList.add('hidden');
+                    return;
+                }
+
+                options.forEach(opt => {
+                    const li = document.createElement('li');
+                    li.className = "px-4 py-2.5 hover:bg-indigo-50 cursor-pointer flex items-center gap-3 text-slate-700 hover:text-indigo-700 transition-colors";
+                    li.innerHTML = `<div class="w-6 h-6 rounded-md bg-indigo-100 flex items-center justify-center shrink-0"><i class="fas fa-stethoscope text-indigo-500 text-[10px]"></i></div> <span class="font-bold text-xs uppercase tracking-wide">${opt}</span>`;
+                    li.onmousedown = (e) => { // Gunakan mousedown agar dieksekusi sebelum input kehilangan fokus (blur)
+                        e.preventDefault();
+                        input.value = opt;
+                        dropdown.classList.add('hidden');
+                        if(onSelectCallback) onSelectCallback();
+                    };
+                    dropdown.appendChild(li);
+                });
+                dropdown.classList.remove('hidden');
+            };
+
+            input.addEventListener('focus', render);
+            input.addEventListener('input', render);
+
+            input.addEventListener('blur', () => {
+                // Sembunyikan dropdown dengan sedikit jeda agar animasi klik selesai
+                setTimeout(() => dropdown.classList.add('hidden'), 150);
             });
         }
 
-        function tambahKeDatalist(diag) {
+        function tambahMasterDiagnosa(diag) {
             if (!diag || diag.trim() === '') return;
             const cleanDiag = diag.trim().toUpperCase();
             if (!setDiagnosaMaster.has(cleanDiag)) {
                 setDiagnosaMaster.add(cleanDiag);
                 localStorage.setItem('erm_master_diagnosa', JSON.stringify(Array.from(setDiagnosaMaster)));
-                renderDatalist();
             }
         }
 
@@ -1569,9 +1603,14 @@
                 if (r.diagnosa3) setDiagnosaMaster.add(r.diagnosa3.trim().toUpperCase());
             });
             
-            // Simpan kembali & Render list
+            // Simpan kembali
             localStorage.setItem('erm_master_diagnosa', JSON.stringify(Array.from(setDiagnosaMaster)));
-            renderDatalist();
+            
+            // Inisialisasi Event Listener Autocomplete Dropdown Kustom
+            setupAutocomplete('pel_diagnosa1', 'dd_pel_diagnosa1');
+            setupAutocomplete('pel_diagnosa2', 'dd_pel_diagnosa2');
+            setupAutocomplete('pel_diagnosa3', 'dd_pel_diagnosa3');
+            setupAutocomplete('kunjungan_diag_search', 'dd_kunjungan_diag_search', renderLaporanKunjunganDiagnosa);
         }
 
         async function fetchDataDariSpreadsheet() {
@@ -2116,10 +2155,10 @@
                         if(elem) pelayananData[idx][propertyKey] = elem.value; 
                     });
                     
-                    // Simpan ke Master Diagnosa untuk Dropdown
-                    tambahKeDatalist(pelayananData[idx].diagnosa1);
-                    tambahKeDatalist(pelayananData[idx].diagnosa2);
-                    tambahKeDatalist(pelayananData[idx].diagnosa3);
+                    // Simpan ke Master Diagnosa untuk Dropdown Custom
+                    tambahMasterDiagnosa(pelayananData[idx].diagnosa1);
+                    tambahMasterDiagnosa(pelayananData[idx].diagnosa2);
+                    tambahMasterDiagnosa(pelayananData[idx].diagnosa3);
 
                     const elTglKontrol = document.getElementById('pel_tgl_kontrol');
                     if(elTglKontrol) {
@@ -2484,63 +2523,92 @@
             const searchInput = document.getElementById('kunjungan_diag_search');
             const query = searchInput ? searchInput.value.trim().toUpperCase() : '';
             
-            if (query) {
-                fd = fd.filter(r => {
-                    const d1 = (r.diagnosa1 || '').toUpperCase();
-                    const d2 = (r.diagnosa2 || '').toUpperCase();
-                    const d3 = (r.diagnosa3 || '').toUpperCase();
-                    return d1.includes(query) || d2.includes(query) || d3.includes(query);
-                });
-            }
-
             const tb = document.getElementById('tableBodyLaporanKunjunganDiagnosa'); 
             if(!tb) return;
             tb.innerHTML = '';
             
-            if (fd.length === 0) { 
-                tb.innerHTML = `<tr><td colspan="8" class="p-10 text-center text-slate-400">Data Kosong. Silakan sesuaikan pencarian.</td></tr>`; 
+            // 1. Kumpulkan semua diagnosa dan pasiennya
+            const diagMap = {};
+            fd.forEach(r => {
+                const addPasien = (diag) => {
+                    if (!diag) return;
+                    const d = diag.trim().toUpperCase();
+                    if (!d) return;
+                    if (!diagMap[d]) diagMap[d] = [];
+                    diagMap[d].push(r);
+                };
+                addPasien(r.diagnosa1);
+                addPasien(r.diagnosa2);
+                addPasien(r.diagnosa3);
+            });
+            
+            // 2. Filter berdasarkan search (jika ada) dan urutkan dari yang terbanyak (Gaya Top 10)
+            let sortedDiags = Object.entries(diagMap).sort((a, b) => b[1].length - a[1].length); 
+            
+            if (query) {
+                sortedDiags = sortedDiags.filter(item => item[0].includes(query));
+            }
+
+            if (sortedDiags.length === 0) { 
+                tb.innerHTML = `<tr><td colspan="7" class="p-10 text-center text-slate-400">Data Kosong. Silakan sesuaikan pencarian.</td></tr>`; 
                 return; 
             }
             
-            fd.forEach((r, i) => {
-                let thn = "-";
-                const pData = patientsData.find(x => x.erm === r.erm);
-                if(pData && pData.tglLahirRaw) { 
-                    const dDate = new Date(pData.tglLahirRaw); 
-                    const today = new Date();
-                    let age = today.getFullYear() - dDate.getFullYear();
-                    const m = today.getMonth() - dDate.getMonth();
-                    if (m < 0 || (m === 0 && today.getDate() < dDate.getDate())) {
-                        age--;
+            // 3. Render per Group Diagnosa
+            sortedDiags.forEach(([diagnosaName, patients]) => {
+                // Header Group Diagnosa
+                tb.innerHTML += `
+                    <tr class="bg-indigo-50/80 border-y border-indigo-100">
+                        <td colspan="7" class="p-3">
+                            <div class="flex items-center gap-2">
+                                <div class="w-6 h-6 rounded-md bg-indigo-200 text-indigo-700 flex items-center justify-center shadow-sm"><i class="fas fa-notes-medical text-[10px]"></i></div>
+                                <span class="font-bold text-indigo-900 uppercase tracking-wide text-sm">${diagnosaName}</span>
+                                <span class="bg-indigo-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold ml-2 shadow-sm">${patients.length} Kasus</span>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                
+                // Daftar Pasien untuk Diagnosa tsb (Urutkan dari terbaru)
+                patients.sort((a, b) => new Date(b.tanggalSistem) - new Date(a.tanggalSistem));
+                
+                // Hapus duplikat pasien pada diagnosa yang sama (jika kebetulan ada)
+                const uniquePatients = Array.from(new Map(patients.map(item => [item.erm + item.waktuDaftar, item])).values());
+                
+                uniquePatients.forEach((r, i) => {
+                    let thn = "-";
+                    const pData = patientsData.find(x => x.erm === r.erm);
+                    if(pData && pData.tglLahirRaw) { 
+                        const dDate = new Date(pData.tglLahirRaw); 
+                        const today = new Date();
+                        let age = today.getFullYear() - dDate.getFullYear();
+                        const m = today.getMonth() - dDate.getMonth();
+                        if (m < 0 || (m === 0 && today.getDate() < dDate.getDate())) {
+                            age--;
+                        }
+                        thn = age + " Thn"; 
                     }
-                    thn = age + " Thn"; 
-                }
-                
-                let alamatLengkap = r.alamat || '-';
-                if (r.rt && r.rt !== '-' && r.rw && r.rw !== '-') alamatLengkap += ` RT.${r.rt}/RW.${r.rw}`;
-                if (r.kel && r.kel !== '-') alamatLengkap += `, ${r.kel}`;
+                    
+                    let alamatLengkap = r.alamat || '-';
+                    if (r.rt && r.rt !== '-' && r.rw && r.rw !== '-') alamatLengkap += ` RT.${r.rt}/RW.${r.rw}`;
+                    if (r.kel && r.kel !== '-') alamatLengkap += `, ${r.kel}`;
 
-                let matchedDiags = [];
-                if (r.diagnosa1 && ((r.diagnosa1).toUpperCase().includes(query) || !query)) matchedDiags.push(r.diagnosa1);
-                if (r.diagnosa2 && ((r.diagnosa2).toUpperCase().includes(query) || !query)) matchedDiags.push(r.diagnosa2);
-                if (r.diagnosa3 && ((r.diagnosa3).toUpperCase().includes(query) || !query)) matchedDiags.push(r.diagnosa3);
-                
-                const jkClass = r.jk === 'Laki-laki' ? 'text-blue-600' : (r.jk === 'Perempuan' ? 'text-pink-600' : 'text-slate-500');
-                const jkDisplay = r.jk === 'Laki-laki' ? 'L' : (r.jk === 'Perempuan' ? 'P' : '-');
+                    const jkClass = r.jk === 'Laki-laki' ? 'text-blue-600' : (r.jk === 'Perempuan' ? 'text-pink-600' : 'text-slate-500');
+                    const jkDisplay = r.jk === 'Laki-laki' ? 'L' : (r.jk === 'Perempuan' ? 'P' : '-');
 
-                tb.innerHTML += `<tr class="border-b border-slate-100 hover:bg-slate-50">
-                    <td class="p-3 text-center font-bold text-slate-500">${i+1}</td>
-                    <td class="p-3">${new Date(r.tanggalSistem).toLocaleDateString('id-ID')}</td>
-                    <td class="p-3 font-mono text-indigo-600">${r.erm}</td>
-                    <td class="p-3 font-bold uppercase text-slate-800">${r.nama}</td>
-                    <td class="p-3 text-center font-bold ${jkClass}">${jkDisplay}</td>
-                    <td class="p-3 text-center">${thn}</td>
-                    <td class="p-3 text-xs truncate max-w-[200px]" title="${alamatLengkap}">${alamatLengkap}</td>
-                    <td class="p-3 font-semibold text-rose-600 text-xs whitespace-pre-wrap">${matchedDiags.filter(Boolean).join(', ')}</td>
-                </tr>`;
+                    tb.innerHTML += `<tr class="border-b border-slate-50 hover:bg-white transition-colors">
+                        <td class="p-3 text-center font-bold text-slate-400 text-xs">${i+1}</td>
+                        <td class="p-3 text-xs text-slate-600">${new Date(r.tanggalSistem).toLocaleDateString('id-ID')}</td>
+                        <td class="p-3 text-xs font-mono text-indigo-500 font-bold">${r.erm}</td>
+                        <td class="p-3 text-xs font-bold uppercase text-slate-700">${r.nama}</td>
+                        <td class="p-3 text-xs text-center font-bold ${jkClass}">${jkDisplay}</td>
+                        <td class="p-3 text-xs text-center font-medium text-slate-600">${thn}</td>
+                        <td class="p-3 text-xs text-slate-500 truncate max-w-[300px]" title="${alamatLengkap}">${alamatLengkap}</td>
+                    </tr>`;
+                });
             });
         }
-        
+
         function downloadLaporan(t) {
             let fd = [], nm = '', csv = "sep=,\n";
             if (t === 'kunjungan') {
@@ -2598,48 +2666,53 @@
                 const searchInput = document.getElementById('kunjungan_diag_search');
                 const query = searchInput ? searchInput.value.trim().toUpperCase() : '';
                 
-                if (query) {
-                    fd = fd.filter(r => {
-                        const d1 = (r.diagnosa1 || '').toUpperCase();
-                        const d2 = (r.diagnosa2 || '').toUpperCase();
-                        const d3 = (r.diagnosa3 || '').toUpperCase();
-                        return d1.includes(query) || d2.includes(query) || d3.includes(query);
-                    });
-                }
-                
-                nm = `Laporan_Kunjungan_Diagnosa_${Date.now()}.csv`;
-                csv += "No,Tanggal,eRM,Nama Pasien,L/P,Usia,Alamat Lengkap,Diagnosa Tercatat\n";
-                fd.forEach((r, i) => {
-                    let thn = "-";
-                    const pData = patientsData.find(x => x.erm === r.erm);
-                    if(pData && pData.tglLahirRaw) { 
-                        const dDate = new Date(pData.tglLahirRaw); 
-                        const today = new Date();
-                        let age = today.getFullYear() - dDate.getFullYear();
-                        const m = today.getMonth() - dDate.getMonth();
-                        if (m < 0 || (m === 0 && today.getDate() < dDate.getDate())) {
-                            age--;
-                        }
-                        thn = age + " Thn"; 
-                    }
-                    
-                    let alamatLengkap = r.alamat || '-';
-                    if (r.rt && r.rt !== '-' && r.rw && r.rw !== '-') alamatLengkap += ` RT.${r.rt}/RW.${r.rw}`;
-                    if (r.kel && r.kel !== '-') alamatLengkap += `, ${r.kel}`;
-
-                    let matchedDiags = [];
-                    if (r.diagnosa1 && ((r.diagnosa1).toUpperCase().includes(query) || !query)) matchedDiags.push(r.diagnosa1);
-                    if (r.diagnosa2 && ((r.diagnosa2).toUpperCase().includes(query) || !query)) matchedDiags.push(r.diagnosa2);
-                    if (r.diagnosa3 && ((r.diagnosa3).toUpperCase().includes(query) || !query)) matchedDiags.push(r.diagnosa3);
-                    
-                    const safeNama = `"${r.nama.replace(/"/g, '""')}"`;
-                    const safeAlamat = `"${alamatLengkap.replace(/"/g, '""')}"`;
-                    const safeDiags = `"${matchedDiags.filter(Boolean).join(', ').replace(/"/g, '""')}"`;
-                    
-                    csv += `${i+1},"${new Date(r.tanggalSistem).toLocaleDateString('id-ID')}","${r.erm}",${safeNama},"${r.jk === 'Laki-laki' ? 'L' : (r.jk === 'Perempuan' ? 'P' : '-')}","${thn}",${safeAlamat},${safeDiags}\n`;
+                const diagMap = {};
+                fd.forEach(r => {
+                    const addPasien = (diag) => {
+                        if (!diag) return;
+                        const d = diag.trim().toUpperCase();
+                        if (!d) return;
+                        if (!diagMap[d]) diagMap[d] = [];
+                        diagMap[d].push(r);
+                    };
+                    addPasien(r.diagnosa1);
+                    addPasien(r.diagnosa2);
+                    addPasien(r.diagnosa3);
                 });
                 
-                if (fd.length === 0) { showToast('Tidak ada data untuk didownload!', 'warning'); return; }
+                let sortedDiags = Object.entries(diagMap).sort((a, b) => b[1].length - a[1].length);
+                if (query) sortedDiags = sortedDiags.filter(item => item[0].includes(query));
+                
+                nm = `Laporan_Kunjungan_Diagnosa_${Date.now()}.csv`;
+                csv += "Diagnosa,No,Tanggal,eRM,Nama Pasien,L/P,Usia,Alamat Lengkap\n";
+                
+                sortedDiags.forEach(([diagnosaName, patients]) => {
+                    const uniquePatients = Array.from(new Map(patients.map(item => [item.erm + item.waktuDaftar, item])).values());
+                    uniquePatients.forEach((r, i) => {
+                        let thn = "-";
+                        const pData = patientsData.find(x => x.erm === r.erm);
+                        if(pData && pData.tglLahirRaw) { 
+                            const dDate = new Date(pData.tglLahirRaw); 
+                            const today = new Date();
+                            let age = today.getFullYear() - dDate.getFullYear();
+                            const m = today.getMonth() - dDate.getMonth();
+                            if (m < 0 || (m === 0 && today.getDate() < dDate.getDate())) age--;
+                            thn = age + " Thn"; 
+                        }
+                        
+                        let alamatLengkap = r.alamat || '-';
+                        if (r.rt && r.rt !== '-' && r.rw && r.rw !== '-') alamatLengkap += ` RT.${r.rt}/RW.${r.rw}`;
+                        if (r.kel && r.kel !== '-') alamatLengkap += `, ${r.kel}`;
+
+                        const safeNama = `"${r.nama.replace(/"/g, '""')}"`;
+                        const safeAlamat = `"${alamatLengkap.replace(/"/g, '""')}"`;
+                        const jk = r.jk === 'Laki-laki' ? 'L' : (r.jk === 'Perempuan' ? 'P' : '-');
+                        
+                        csv += `"${diagnosaName}",${i+1},"${new Date(r.tanggalSistem).toLocaleDateString('id-ID')}","${r.erm}",${safeNama},"${jk}","${thn}",${safeAlamat}\n`;
+                    });
+                });
+                
+                if (sortedDiags.length === 0) { showToast('Tidak ada data untuk didownload!', 'warning'); return; }
             }
             
             const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
