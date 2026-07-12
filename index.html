@@ -1884,7 +1884,14 @@
                 if(row.tag==='Baru') nm += `<span class="ml-2 md:ml-3 bg-teal-100 text-teal-700 text-[9px] md:text-[10px] px-1.5 md:px-2 py-0.5 rounded-md font-bold uppercase tracking-wider border border-teal-200">Baru</span>`;
                 
                 let thn = "0";
-                if(row.tglLahirRaw) { const d=new Date(row.tglLahirRaw); thn = new Date().getFullYear() - d.getFullYear(); }
+                if(row.tglLahirRaw) { 
+                    const dDate = new Date(row.tglLahirRaw); 
+                    const today = new Date();
+                    let age = today.getFullYear() - dDate.getFullYear();
+                    const m = today.getMonth() - dDate.getMonth();
+                    if (m < 0 || (m === 0 && today.getDate() < dDate.getDate())) { age--; }
+                    thn = age;
+                }
                 
                 let almtDisplay = row.alamat;
                 if(row.rt && row.rt !== '-' && row.rw && row.rw !== '-') {
@@ -2046,8 +2053,12 @@
                 let thn = "0";
                 const pData = patientsData.find(x => x.erm === row.erm);
                 if(pData && pData.tglLahirRaw) { 
-                    const d = new Date(pData.tglLahirRaw); 
-                    thn = new Date().getFullYear() - d.getFullYear(); 
+                    const dDate = new Date(pData.tglLahirRaw); 
+                    const today = new Date();
+                    let age = today.getFullYear() - dDate.getFullYear();
+                    const m = today.getMonth() - dDate.getMonth();
+                    if (m < 0 || (m === 0 && today.getDate() < dDate.getDate())) { age--; }
+                    thn = age;
                 }
                 let jkDisplay = row.jk === 'Laki-laki' ? 'L' : (row.jk === 'Perempuan' ? 'P' : '-');
                 let jkClass = row.jk === 'Laki-laki' ? 'text-blue-600' : (row.jk === 'Perempuan' ? 'text-pink-600' : 'text-slate-500');
@@ -2471,7 +2482,7 @@
             tb.innerHTML = '';
             
             if (fd.length === 0) { 
-                tb.innerHTML = `<tr><td colspan="8" class="p-10 text-center text-slate-400">Data Kosong. Silakan ketik diagnosa di kolom pencarian.</td></tr>`; 
+                tb.innerHTML = `<tr><td colspan="8" class="p-10 text-center text-slate-400">Data Kosong. Silakan sesuaikan pencarian.</td></tr>`; 
                 return; 
             }
             
@@ -2480,7 +2491,13 @@
                 const pData = patientsData.find(x => x.erm === r.erm);
                 if(pData && pData.tglLahirRaw) { 
                     const dDate = new Date(pData.tglLahirRaw); 
-                    thn = new Date().getFullYear() - dDate.getFullYear() + " Thn"; 
+                    const today = new Date();
+                    let age = today.getFullYear() - dDate.getFullYear();
+                    const m = today.getMonth() - dDate.getMonth();
+                    if (m < 0 || (m === 0 && today.getDate() < dDate.getDate())) {
+                        age--;
+                    }
+                    thn = age + " Thn"; 
                 }
                 
                 let alamatLengkap = r.alamat || '-';
@@ -2559,7 +2576,7 @@
                     csv += `${i+1},"${nama}",${count.L},${count.P},${count.T}\n`;
                 });
                 csv += `,,${totalL},${totalP},${totalT}\n`;
-                if(sortedDiag.length > 0) fd = sortedDiag; // bypass empty array block alert for logic below
+                if(sortedDiag.length === 0) { showToast('Tidak ada data untuk didownload!', 'warning'); return; }
             } else if (t === 'kunjungan_diagnosa') {
                 fd = filterDataByDate(pelayananData.filter(p => p.status === 'selesai_kasir' || p.status === 'antrean_kasir'), 'kunjungan_diag_start', 'kunjungan_diag_end');
                 const searchInput = document.getElementById('kunjungan_diag_search');
@@ -2581,7 +2598,13 @@
                     const pData = patientsData.find(x => x.erm === r.erm);
                     if(pData && pData.tglLahirRaw) { 
                         const dDate = new Date(pData.tglLahirRaw); 
-                        thn = new Date().getFullYear() - dDate.getFullYear() + " Thn"; 
+                        const today = new Date();
+                        let age = today.getFullYear() - dDate.getFullYear();
+                        const m = today.getMonth() - dDate.getMonth();
+                        if (m < 0 || (m === 0 && today.getDate() < dDate.getDate())) {
+                            age--;
+                        }
+                        thn = age + " Thn"; 
                     }
                     
                     let alamatLengkap = r.alamat || '-';
@@ -2593,10 +2616,15 @@
                     if ((r.diagnosa2||'').toUpperCase().includes(query) || (!query && r.diagnosa2)) matchedDiags.push(r.diagnosa2);
                     if ((r.diagnosa3||'').toUpperCase().includes(query) || (!query && r.diagnosa3)) matchedDiags.push(r.diagnosa3);
                     
-                    csv += `${i+1},"${new Date(r.tanggalSistem).toLocaleDateString('id-ID')}","${r.erm}","${r.nama}","${r.jk === 'Laki-laki' ? 'L' : (r.jk === 'Perempuan' ? 'P' : '-')}","${thn}","${alamatLengkap}","${matchedDiags.filter(Boolean).join(', ')}"\n`;
+                    const safeNama = `"${r.nama.replace(/"/g, '""')}"`;
+                    const safeAlamat = `"${alamatLengkap.replace(/"/g, '""')}"`;
+                    const safeDiags = `"${matchedDiags.filter(Boolean).join(', ').replace(/"/g, '""')}"`;
+                    
+                    csv += `${i+1},"${new Date(r.tanggalSistem).toLocaleDateString('id-ID')}","${r.erm}",${safeNama},"${r.jk === 'Laki-laki' ? 'L' : (r.jk === 'Perempuan' ? 'P' : '-')}","${thn}",${safeAlamat},${safeDiags}\n`;
                 });
+                
+                if (fd.length === 0) { showToast('Tidak ada data untuk didownload!', 'warning'); return; }
             }
-            if (fd.length === 0) { showToast('Tidak ada data untuk didownload!', 'warning'); return; }
             
             const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
